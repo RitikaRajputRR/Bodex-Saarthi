@@ -4,6 +4,13 @@ import remarkGfm from "remark-gfm";
 
 import "./App.css";
 
+// ==========================================
+// RENDER BACKEND URL
+// ==========================================
+
+const BACKEND_URL =
+  "https://bodex-saarthi-backend.onrender.com";
+
 function App() {
   // ==========================================
   // CHAT STATE
@@ -20,8 +27,6 @@ function App() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [history, setHistory] = useState([]);
 
-  // IMPORTANT:
-  // Current open chat ka ID
   const [activeChatId, setActiveChatId] = useState(null);
 
   // ==========================================
@@ -81,7 +86,6 @@ function App() {
 
     if (!firstUserMessage) return;
 
-    // Current chat ka ID nahi hai to naya ID create karo
     const chatId = activeChatId || Date.now();
 
     if (!activeChatId) {
@@ -215,8 +219,6 @@ function App() {
     setSelectedFile(null);
     setSelectedFileUrl(null);
 
-    // IMPORTANT:
-    // Next message ke liye completely new chat
     setActiveChatId(null);
 
     if (fileInputRef.current) {
@@ -239,8 +241,6 @@ function App() {
 
     setHistory([]);
     setMessages([]);
-
-    // Current chat ID bhi clear
     setActiveChatId(null);
 
     localStorage.removeItem(
@@ -259,8 +259,6 @@ function App() {
     window.speechSynthesis.cancel();
     setSpeakingIndex(null);
 
-    // IMPORTANT:
-    // Jo chat click kiya hai uska ID active karo
     setActiveChatId(chat.id);
 
     setMessages(chat.messages || []);
@@ -288,7 +286,6 @@ function App() {
       JSON.stringify(updated)
     );
 
-    // Agar currently opened chat delete hui
     if (activeChatId === id) {
       setActiveChatId(null);
       setMessages([]);
@@ -504,9 +501,7 @@ function App() {
     const fileToSend = selectedFile;
 
     // ========================================
-    // IMPORTANT:
-    // Agar ye new chat hai to ID send hone se
-    // pehle create kar do
+    // CREATE CHAT ID
     // ========================================
 
     if (!activeChatId) {
@@ -602,11 +597,11 @@ function App() {
       }
 
       // ======================================
-      // BACKEND
+      // RENDER BACKEND
       // ======================================
 
       const response = await fetch(
-        "http://127.0.0.1:5000/chat",
+        `${BACKEND_URL}/chat`,
         {
           method: "POST",
           body: formData,
@@ -633,7 +628,7 @@ function App() {
                   );
           }
         } catch {
-          // Ignore
+          // Ignore JSON parsing error
         }
 
         throw new Error(errorMessage);
